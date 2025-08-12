@@ -66,7 +66,7 @@
               //一致するユーザー名がない、つまりアカウントがまだない
               if (count($results) === 0)
               {
-                  echo "アカウントが存在しません！<br /><br />";
+                  echo "<script>alert('アカウントが存在しません');</script>";
               } 
               
               else
@@ -86,7 +86,7 @@
                       //passが合わない時
                       else 
                       {
-                          echo "パスワードがちがう！！<br /><br />";
+                          echo "<script>alert('パスワードが違います');</script>";
                       }
                   }
                }
@@ -95,7 +95,7 @@
            //入力不備があるとき
            else
           {
-              echo "入力不備あり<br />";
+              echo "<script>alert('入力に不備があります');</script>";
           }
       
       }
