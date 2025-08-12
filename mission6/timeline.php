@@ -52,7 +52,7 @@ $pdo = db();
     </form>
     <br>
     
-    <div style="font-size:30px text-align:center; font-weight:bold">
+    <div style="font-size:30px; text-align:center; font-weight:bold">
         投稿一覧
     </div>
   </div>
@@ -66,7 +66,7 @@ $pdo = db();
     //投稿が押されたら遷移
     if(isset($_POST["submit"]))
     {
-        header("Location: http://localhost/phpkiso/mission6/submit.php");
+        header("Location: submit.php");
         exit;
     }
     
