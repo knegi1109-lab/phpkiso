@@ -3,8 +3,14 @@ session_start();
 include_once "dbconnect.php";
 $pdo = db();
 
-// URLからuser_idを取得
-$user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+if (!isset($_SESSION["user_id"]))
+{
+    header("Location: login.php");
+    exit;
+}
+
+// セッションからuser_idを取得
+$user_id=$_SESSION["user_id"];
 
 // 該当ユーザーの投稿を取得
 $sql = "SELECT post.id AS post_id, post.text, post.image, post.created, account.name, account.icon, account.message
@@ -37,20 +43,19 @@ $results = $stmt->fetchAll();
         <strong>
             <div class="headright">
                 <a href="timeline.php" style="color:white;">タイムラインへ</a>
-                on：<?php echo htmlspecialchars($_SESSION["username"]); ?>
+                <a href="ed_ac.php" style="color:white;">編集</a>
             </div>
         </strong>
   </div>
   <br>
-  
   <div class="post-container">
      <img src='icon/<?php echo $results[0]['icon'] ?? 'default.png';?>' style='width: 60px; height: 60px; border-radius: 50%; vertical-align: middle; margin-right: 10px; object-fit:cover;'>
      <span style='; font-size:25px'><strong><?php echo htmlspecialchars($results[0]['name']); ?></strong></span>
-     <p><?php echo nl2br(htmlspecialchars($results[0]['message'])); ?></p>
-     <br><br><br>
+     <div><?php echo nl2br(htmlspecialchars($results[0]['message'])); ?><div>
+     <br><br>
      <hr>
     <h2 class="submit-btn"><div class="center"><?php echo htmlspecialchars($results[0]['name'] ?? 'ユーザー'); ?> さんの投稿一覧</div></h2>
-    
+    <br>
     <?php
       foreach ($results as $row) 
       {
@@ -79,7 +84,7 @@ $results = $stmt->fetchAll();
           echo "<p>" . nl2br(htmlspecialchars($row['text'])) . "</p>";
           echo "<small>" . htmlspecialchars($row['created']) . "</small>";
           
-          // いいね数取得
+           // いいね数取得
           $like_sql = "SELECT COUNT(*) FROM likes WHERE post_id = :post_id";
           $like_stmt = $pdo->prepare($like_sql);
           $like_stmt->bindValue(":post_id", $post_id, PDO::PARAM_INT);
@@ -105,24 +110,5 @@ $results = $stmt->fetchAll();
       }
     ?>
   </div>
-  <script>
-  document.querySelectorAll('.like-btn').forEach(button => {
-  button.addEventListener('click', function () {
-    const postId = this.getAttribute('data-post-id');
-    fetch('like.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'post_id=' + encodeURIComponent(postId)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        this.textContent = '❤️';
-        document.getElementById('like-count-' + postId).textContent = data.like_count;
-      }
-    });
-  });
-});
-</script>
 </body>
 </html>

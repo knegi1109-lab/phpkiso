@@ -11,6 +11,27 @@ if (!isset($_SESSION["user_id"]))
 // sql接続
 include_once "dbconnect.php";
 $pdo = db();
+
+if (isset($_POST["like"]) && !empty($_POST["like_post_id"]))
+{
+    $like_post_id = intval($_POST["like_post_id"]);
+
+    // すでにいいねしていない場合のみ追加
+    $check_sql = "SELECT * FROM likes WHERE post_id = :post_id AND user_id = :user_id";
+    $check_stmt = $pdo->prepare($check_sql);
+    $check_stmt->bindValue(":post_id", $like_post_id, PDO::PARAM_INT);
+    $check_stmt->bindValue(":user_id", $_SESSION["user_id"], PDO::PARAM_INT);
+    $check_stmt->execute();
+
+    if (!$check_stmt->fetch()) 
+    {
+        $insert_sql = "INSERT INTO likes (post_id, user_id) VALUES (:post_id, :user_id)";
+        $insert_stmt = $pdo->prepare($insert_sql);
+        $insert_stmt->bindValue(":post_id", $like_post_id, PDO::PARAM_INT);
+        $insert_stmt->bindValue(":user_id", $_SESSION["user_id"], PDO::PARAM_INT);
+        $insert_stmt->execute();
+    }
+}
 ?>    
     
 <!DOCTYPE html>
@@ -58,7 +79,7 @@ $pdo = db();
     
     <h2>
         投稿一覧
-    <h2>
+    </h2>
   </div>
 
   <!--style.cssの設定で投稿の幅等きめる-->
@@ -89,7 +110,7 @@ $pdo = db();
      //検索がなかったら投稿が新しい順で取得
      else
      {
-       $sql = "SELECT post.user_id, post.text, post.image, post.created, account.name, account.icon
+       $sql = "SELECT post.id AS post_id, post.user_id, post.text, post.image, post.created, account.name, account.icon
                FROM post
                JOIN account ON post.user_id = account.id 
                ORDER BY post.created DESC";
@@ -105,6 +126,7 @@ $pdo = db();
             //style.cssの設定で投稿枠を作る
             echo "<div class='post'>";
             echo "<div class='post-header'>";
+            $post_id = $row['post_id'];
             
             //アイコンを切り抜き可で円形に出力
             if (!empty($row['icon'])) 
@@ -129,10 +151,53 @@ $pdo = db();
             
             echo "<p>" . nl2br(htmlspecialchars($row['text'])) . "</p>";
             echo "<small>" . htmlspecialchars($row['created']) . "</small>";
-            echo "</div>";
+            
+           // いいね数取得
+           $like_sql = "SELECT COUNT(*) FROM likes WHERE post_id = :post_id";
+           $like_stmt = $pdo->prepare($like_sql);
+           $like_stmt->bindValue(":post_id", $post_id, PDO::PARAM_INT);
+           $like_stmt->execute();
+           $like_count = $like_stmt->fetchColumn();
+
+           // 自分がいいね済みか確認
+           $check_sql = "SELECT * FROM likes WHERE post_id = :post_id AND user_id = :user_id";
+           $check_stmt = $pdo->prepare($check_sql);
+           $check_stmt->bindValue(":post_id", $post_id, PDO::PARAM_INT);
+           $check_stmt->bindValue(":user_id", $_SESSION["user_id"], PDO::PARAM_INT);
+           $check_stmt->execute();
+           $liked = $check_stmt->fetch();
+
+           // 表示部分
+           echo "<div class='like-area'>";
+           echo "<button class='like-btn' data-post-id='" . $post_id . "'>";
+           echo $liked ? "❤️" : "🤍";
+           echo "</button>";
+           echo "<span class='like-count' id='like-count-" . $post_id . "'>" . $like_count . "</span> 件";
+           echo "</div>";
+           echo "</div>";
       }
   ?>
   
   </div>
+  <script>
+  document.querySelectorAll('.like-btn').forEach(button => {
+  button.addEventListener('click', function () {
+    const postId = this.getAttribute('data-post-id');
+    fetch('like.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'post_id=' + encodeURIComponent(postId)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        this.textContent = '❤️';
+        document.getElementById('like-count-' + postId).textContent = data.like_count;
+      }
+    });
+  });
+});
+</script>
+
 </body>
 </html>

@@ -114,7 +114,7 @@ else if(isset($_POST["update"]) && !isset($_POST["new_name"]))
     
     <label>新しいステータスメッセージ</label>
     <?php $stme = isset($_SESSION["user_message"]) ? $_SESSION["user_message"] : "ステメ"; ?><br>
-    <textarea type="text" name="stme" value="<?php echo $stme?>" rows="5" cols="60"></textarea><br>
+    <p><textarea type="text" name="stme" rows="5" cols="60"><?php echo htmlspecialchars($stme)?></textarea></p><br>
 
     <input type="submit" name="update" value="変更する">
   </form>
@@ -126,7 +126,7 @@ else if(isset($_POST["update"]) && !isset($_POST["new_name"]))
 <div class="post-container">
 <?php
 //ログインしているアカウントと投稿を連結して取り出し、投稿が新しい順に出す
-$sql = "SELECT post.id, post.text, post.image, post.created, account.name, account.icon
+$sql = "SELECT post.id AS post_id, post.text, post.image, post.created, account.name, account.icon
         FROM post
         JOIN account ON post.user_id = account.id 
         WHERE post.user_id = :user_id
@@ -142,6 +142,7 @@ foreach ($results as $row)
       //style.cssでの設定で投稿枠、投稿のヘッダーを作る
       echo "<div class='post'>";
       echo "<div class='post-header'>";
+      $post_id=$row['post_id'];
       
       if (!empty($row['icon'])) 
       {
@@ -168,9 +169,33 @@ foreach ($results as $row)
       echo "<p>" . nl2br(htmlspecialchars($row['text'])) . "</p>";
       echo "<small>" . htmlspecialchars($row['created']) . "</small>";
       
+      // いいね数取得
+      $like_sql = "SELECT COUNT(*) FROM likes WHERE post_id = :post_id";
+      $like_stmt = $pdo->prepare($like_sql);
+      $like_stmt->bindValue(":post_id", $post_id, PDO::PARAM_INT);
+      $like_stmt->execute();
+      $like_count = $like_stmt->fetchColumn();
+
+      // 自分がいいね済みか確認
+      $check_sql = "SELECT * FROM likes WHERE post_id = :post_id AND user_id = :user_id";
+      $check_stmt = $pdo->prepare($check_sql); 
+      $check_stmt->bindValue(":post_id", $post_id, PDO::PARAM_INT);
+      $check_stmt->bindValue(":user_id", $_SESSION["user_id"], PDO::PARAM_INT);
+      $check_stmt->execute();
+      $liked = $check_stmt->fetch();
+
+      // 表示部分
+      echo "<div class='like-area'>";
+      echo "<button class='like-btn' data-post-id='" . $post_id . "'>";
+      echo $liked ? "❤️" : "🤍";
+      echo "</button>";
+      echo "<span class='like-count' id='like-count-" . $post_id . "'>" . $like_count . "</span> 件";
+      echo "</div>";
+     
+      
       //投稿の下に削除フォーム
       echo "<form method='post' style='margin-top:10px;'>
-      　　　　<input type='hidden' name='delete_id' value=". $row['id'] . ">
+      　　　　<input type='hidden' name='delete_id' value=". $row['post_id'] . ">
             <input type='submit' name='delete' value='削除する' class='delete-btn'>
           　</form>";
       echo "</div>";
