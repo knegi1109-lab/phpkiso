@@ -1,4 +1,4 @@
- <?php
+<?php
      //sql接続
       include_once "dbconnect.php";
       $pdo = db();
@@ -12,6 +12,7 @@
           echo $row['id'].'  ';
           echo $row['name'].'  ';
           echo $row['pass'].'<br />';
+          echo $row['massege'].'<br />';
           echo "<hr>";
       }
 ?>

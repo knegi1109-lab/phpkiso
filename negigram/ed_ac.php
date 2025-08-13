@@ -31,9 +31,10 @@ if (isset($_POST["delete"]) && !empty($_POST["delete_id"]))
 }
 
 // フォーム送信時の処理
-if (isset($_POST["update"])) 
+if (isset($_POST["update"]) && !empty($_POST["new_name"])) 
 {
     $new_name = $_POST["new_name"];
+    $new_message=$_POST["stme"];
 
     // アイコン画像アップロード処理
     $icon_name = ""; // デフォルト空
@@ -46,16 +47,17 @@ if (isset($_POST["update"]))
     // SQL準備（アイコン有無で分岐）
     if (!empty($icon_name)) 
     {
-        $sql = "UPDATE account SET name = :new_name, icon = :icon WHERE id = :user_id";
+        $sql = "UPDATE account SET name = :new_name, icon = :icon, message = :new_message WHERE id = :user_id";
     } 
     
     else 
     {
-        $sql = "UPDATE account SET name = :new_name WHERE id = :user_id";
+        $sql = "UPDATE account SET name = :new_name, message = :new_message WHERE id = :user_id";
     }
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(":new_name", $new_name, PDO::PARAM_STR);
+    $stmt->bindValue(":new_message", $new_message, PDO::PARAM_STR);
     
     if (!empty($icon_name)) 
     {
@@ -67,7 +69,13 @@ if (isset($_POST["update"]))
 
     // セッションも更新！
     $_SESSION["username"] = $new_name;
+    $_SESSION["user_message"]=$new_message;
     $message = "プロフィールを更新しました！";
+}
+
+else if(isset($_POST["update"]) && !isset($_POST["new_name"]))
+{
+    echo "<script>alert('名前を入力してください'); </script>";
 }
 ?>
 
@@ -89,11 +97,12 @@ if (isset($_POST["update"]))
         <div class="sitetitle">Negigram</div>
         <strong>
             <div class="headright">
-                <a href="timeline.php" style="color:white;">←タイムラインへ戻る</a>
+                <a href="timeline.php" style="color:white;">←タイムラインへ</a>
+                <a href="myac.php" style="color:white;">ユーザー</a>
             </div>
         </strong>
     </div>
-  <h2>プロフィール編集</h2>
+  <p id="site-title" style="text-align:center; font-weight:bold;">プロフィール編集</p>
 
   <!--アカウント編集フォーム-->
   <form method="post" enctype="multipart/form-data" class="center">
@@ -102,6 +111,10 @@ if (isset($_POST["update"]))
 
     <label>新しいアイコン画像：</label><br>
     <input type="file" name="icon"><br><br>
+    
+    <label>新しいステータスメッセージ</label>
+    <?php $stme = isset($_SESSION["user_message"]) ? $_SESSION["user_message"] : "ステメ"; ?><br>
+    <textarea type="text" name="stme" value="<?php echo $stme?>" rows="5" cols="60"></textarea><br>
 
     <input type="submit" name="update" value="変更する">
   </form>

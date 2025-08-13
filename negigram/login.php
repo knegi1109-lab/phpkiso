@@ -66,7 +66,7 @@
               //一致するユーザー名がない、つまりアカウントがまだない
               if (count($results) === 0)
               {
-                  echo "<script>alert('アカウントが存在しません');</script>";
+                  echo "<script>alert('アカウントないよ');</script>";
               } 
               
               else
@@ -78,6 +78,7 @@
                           //ログインしたユーザーのid、名前をセッションに保存しタイムラインへ
                           $_SESSION["user_id"] = $row['id'];
                           $_SESSION["username"] = $row['name'];
+                          $_SESSION["user_message"] = $row['message'];
                       
                           header("Location: timeline.php");
                           exit;
@@ -86,7 +87,7 @@
                       //passが合わない時
                       else 
                       {
-                          echo "<script>alert('パスワードが違います');</script>";
+                          echo "<script>alert('パスワード違う');</script>";
                       }
                   }
                }
@@ -95,7 +96,7 @@
            //入力不備があるとき
            else
           {
-              echo "<script>alert('入力に不備があります');</script>";
+              echo "入力不備あり<br />";
           }
       
       }

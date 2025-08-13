@@ -19,7 +19,7 @@
         //あった場合
         if($count>0)
         {
-            $message="<script>alert('このユーザー名はもう使われています');</script>";//重複時メッセージ
+            $message="このユーザー名は使われています<br />";//重複時メッセージ
         }
         
         //なかった場合、アカウントを追加してログイン画面へ
@@ -33,13 +33,13 @@
                 $stmt->bindParam(':name', $name, PDO::PARAM_STR);
                 $stmt->bindParam(':pass', $pass, PDO::PARAM_STR);
                 $stmt->execute();
-                header("Location: http://localhost/phpkiso/mission6/login.php");
+                header("Location: https://tech-base.net/tb-270313/mission6/login.php");
                 exit;
             }
       
             else
             {
-                $message="<script>alert('入力に不備があります');</script>";//入力不足時メッセージ
+                $message="入力不備あり<br />";//入力不足時メッセージ
             }
         }
     }
@@ -64,8 +64,8 @@
         <div class="sitetitle">Negigram</div>
         <srrong>
             <div class="headright">
-                <a href="phpkiso/mission6/login.php" style="color:white;">ログイン</a>
-                <a href="phpkiso/mission6/csvin.php" style="color:white;">団体登録</a>
+                <a href="login.php" style="color:white;">ログイン</a>
+                <a href="csvin.php" style="color:white;">団体登録</a>
             </div>
         </srrong>
     </div>
@@ -86,3 +86,4 @@
     </form>
     <?php echo $message; ?><!--状況別メッセージ-->
 </body>
+</html>

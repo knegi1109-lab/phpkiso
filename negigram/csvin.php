@@ -13,29 +13,29 @@
 </head>
 <body>
     <!--style.cssでの設定でサイトのヘッダー真ん中に題名、右端に画面遷移の機能をつける。-->
-<div class="headbar">
-    <div class="sitetitle">Negigram</div>
-    <srrong>
-        <div class="headright">
-            <a href="login.php" style="color:white;">ログイン</a>
-            <a href="make_ac.php" style="color:white;">新規登録</a>
-        </div>
-    </srrong>
-</div>
+  　<div class="headbar">
+        <div class="sitetitle">Negigram</div>
+        <srrong>
+            <div class="headright">
+                <a href="login.php" style="color:white;">ログイン</a>
+                <a href="make_ac.php" style="color:white;">新規登録</a>
+            </div>
+        </srrong>
+    </div>
     
     
-<div class="center" id="site-title" style="font-size:20px; text-align:center; font-weight:bold;">
-    団体登録
-</div>
+    <div class="center" id="site-title" style="font-size:20px; text-align:center; font-weight:bold;">
+        団体登録
+    </div>
     
     <!--団体登録フォーム-->
-<form action="" method="post" enctype="multipart/form-data">
-    <div class="center">
-        <input type="file" name="csvfile" accept=".csv">
-        <br><br>
-        <input type="submit" name="submit" value="CSVから登録">
-    </div>
-</form>
+  　<form action="" method="post" enctype="multipart/form-data">
+    　　<div class="center">
+      　　　　<input type="file" name="csvfile" accept=".csv">
+      　　　　<br><br>
+      　　　　<input type="submit" name="submit" value="CSVから登録">
+    　　</div>
+  　</form>
 
 <?php
 //sql接続

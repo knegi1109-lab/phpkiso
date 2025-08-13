@@ -32,11 +32,15 @@ $pdo = db();
         <div class="sitetitle">Negigram</div>
         <strong>
             <div class="headright">
-                <a href="ed_ac.php" style="color:white;">ユーザー編集</a>
+                <a href="myac.php" style="color:white;">ユーザー確認</a>
                 on：<?php echo htmlspecialchars($_SESSION["username"]); ?>
             </div>
         </strong>
     </div>
+    
+    <p id="site-title" style="text-align:center; font-weight:bold;">
+        タイムライン
+    </p>
   
   <!--style.cssでの設定で検索フォームを作る-->
   <div class="search-bar">
@@ -52,9 +56,9 @@ $pdo = db();
     </form>
     <br>
     
-    <div style="font-size:30px; text-align:center; font-weight:bold">
+    <h2>
         投稿一覧
-    </div>
+    <h2>
   </div>
 
   <!--style.cssの設定で投稿の幅等きめる-->
@@ -66,7 +70,7 @@ $pdo = db();
     //投稿が押されたら遷移
     if(isset($_POST["submit"]))
     {
-        header("Location: submit.php");
+        header("Location: https://tech-base.net/tb-270313/mission6/submit.php");
         exit;
     }
     
@@ -85,7 +89,7 @@ $pdo = db();
      //検索がなかったら投稿が新しい順で取得
      else
      {
-       $sql = "SELECT post.text, post.image, post.created, account.name, account.icon
+       $sql = "SELECT post.user_id, post.text, post.image, post.created, account.name, account.icon
                FROM post
                JOIN account ON post.user_id = account.id 
                ORDER BY post.created DESC";
@@ -114,7 +118,7 @@ $pdo = db();
                 echo "<img src='icons/default.png' style='width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-right: 10px;'>";
             }
             
-            echo "<p><strong>" . htmlspecialchars($row['name']) . "</strong> さんの投稿</p>";
+            echo "<p><strong><a href='lookuser.php?user_id=".$row['user_id']."'style='color:inherit; text-decoration:none;'>" . htmlspecialchars($row['name']) . "</a></strong> さんの投稿</p>";
             echo "</div>";
             
             //投稿画像を角を丸くして出力

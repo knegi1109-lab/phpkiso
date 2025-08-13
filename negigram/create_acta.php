@@ -8,7 +8,8 @@
         . "id INT AUTO_INCREMENT PRIMARY KEY,"
         . "name CHAR(32),"
         . "pass TEXT,"
-        . "icon VARCHAR(255)"
+        . "icon VARCHAR(255),"
+        . "message TEXT"
         .");";
  
   $stmt = $pdo->query($sql);

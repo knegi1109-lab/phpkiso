@@ -36,9 +36,9 @@ $pdo = db();
         </strong>
     </div>
     
-    <div class="center">
+    <p id="site-title" style="text-align:center; font-weight:bold;">
         投稿画面
-    </div>
+    </p>
     
     <!--投稿フォーム-->
     <form method="post" enctype="multipart/form-data" class="center">
@@ -76,3 +76,4 @@ $pdo = db();
       }
    ?>
 </body>
+</html>
