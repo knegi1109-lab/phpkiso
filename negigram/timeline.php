@@ -191,7 +191,7 @@ if (isset($_POST["like"]) && !empty($_POST["like_post_id"]))
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        this.textContent = '❤️';
+        this.textContent = data.liked ? '❤️' : '🤍';
         document.getElementById('like-count-' + postId).textContent = data.like_count;
       }
     });

@@ -117,7 +117,7 @@ $results = $stmt->fetchAll();
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        this.textContent = '❤️';
+        this.textContent = data.liked ? '❤️' : '🤍';
         document.getElementById('like-count-' + postId).textContent = data.like_count;
       }
     });
